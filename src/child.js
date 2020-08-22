@@ -1,12 +1,34 @@
 import PostMessageEventNamesEnum from './enums/PostMessageEventNamesEnum';
 import WarningTextEnum from './enums/WarningTextEnum';
 
+/**
+ * Callback to be invoked whenever Parent communicates with the child tab
+ *
+ * @callback onParentCommunicationCallback
+ * @param {Object} data
+ */
+
+/**
+ * Child Config keys object
+ * @typedef {Object} ChildConfig
+ * @property {number} [handshakeExpiryLimit=5000] - Time to wait in milliseconds for getting an acknowledgement from Parent window for child's request
+ * @property {Boolean | null} [isSiteInsideFrame=null] - If child tab has actual site in iframe
+ * @property {Boolean} [shouldInitImmediately] - Pass it as false to create an instance but initialize it later
+ * @property {Function} [onReady] - Callback to be invoked once child instance is ready
+ * @property {Function} [onInitialize] - Callback when a child instance is actually initiated
+ * @property {Function} [onParentDisconnect] - Callback to be invoked when Parent gets disconnected
+ * @property {onParentCommunicationCallback} [onParentCommunication] - Function as callback
+ * @property {string} [origin='*'] - Callback to be invoked whenever Parent communicates with the child tab
+ * @property {Function} [parse] - Parser used when parsing messages, defaults to JSON.parse
+ * @property {Function} [stringify] - Stringifier used when converting data into messages, defaults to JSON.stringify
+ */
+
 // Named Class expression
 class Child {
   /**
    * Involed when object is instantiated
    * Set flags/variables and calls init method to attach event listeners
-   * @param  {Object} config - Refer API/docs for config keys
+   * @param  {ChildConfig} config - Refer API/docs for config keys
    */
   constructor(config) {
     this.sessionStorageKey = '__vwo_new_tab_info__';
@@ -34,7 +56,7 @@ class Child {
     Object.assign(this, config);
     this.config = config;
 
-    if (this.shouldInitImmediately) {
+    if (config.shouldInitImmediately) {
       this.init();
     }
   }
